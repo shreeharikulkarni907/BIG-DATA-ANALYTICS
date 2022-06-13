@@ -1,0 +1,300 @@
+ use mySTUD;
+switched to db mySTUD
+> db.getCollectionNames()
+[ ]
+> db.createCollection("Student");
+{ "ok" : 1 }
+> db.getCollectionNames()
+[ "Student" ]
+> db.Student.insert({_id: 1, Name:"John", USN: "1B22CS001",Semester: 6,Dept_name: "CSE", CGPA: 9.6, Hobbies : ["Reading","Gardening"]})
+WriteResult({ "nInserted" : 1 })
+> db.Student.insert({_id: 4, Name:"Arthur", USN: "1B22CS041",Semester: 6,Dept_name: "CSE", CGPA: 8.6, Hobbies : ["Novel Reading"]})
+WriteResult({ "nInserted" : 1 })
+> db.Student.insert({_id: 3, Name:"Horris", USN: "1B22EE021",Semester: 5,Dept_name: "EEE", CGPA: 9.3, Hobbies : ["eSports"]})
+WriteResult({ "nInserted" : 1 })
+> db.Student.insert({_id: 7, Name:"Hritik", USN: "1B22CS014",Semester: 5,Dept_name: "CSE", CGPA: 8.7, Hobbies : ["Reading"]})
+WriteResult({ "nInserted" : 1 })
+> db.Student.find().pretty()
+{
+	"_id" : 1,
+	"Name" : "John",
+	"USN" : "1B22CS001",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 9.6,
+	"Hobbies" : [
+		"Reading",
+		"Gardening"
+	]
+}
+{
+	"_id" : 4,
+	"Name" : "Arthur",
+	"USN" : "1B22CS041",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.6,
+	"Hobbies" : [
+		"Novel Reading"
+	]
+}
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : [
+		"eSports"
+	]
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+
+> db.Student.update({_id: 3, Name:"Horris", USN: "1B22EE021",Semester: 5,Dept_name: "EEE", CGPA: 9.3},{$set:{Hobbies:"Skating"}},{upset:true});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty()
+{
+	"_id" : 1,
+	"Name" : "John",
+	"USN" : "1B22CS001",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 9.6,
+	"Hobbies" : [
+		"Reading",
+		"Gardening"
+	]
+}
+{
+	"_id" : 4,
+	"Name" : "Arthur",
+	"USN" : "1B22CS041",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.6,
+	"Hobbies" : [
+		"Novel Reading"
+	]
+}
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : "Skating"
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+> db.Student.find({},{StudName:1,Semester:1,_id:0});
+{ "Semester" : 6 }
+{ "Semester" : 6 }
+{ "Semester" : 5 }
+{ "Semester" : 5 }
+> db.Student.find({},{Name:1,Semester:1,_id:0});
+{ "Name" : "John", "Semester" : 6 }
+{ "Name" : "Arthur", "Semester" : 6 }
+{ "Name" : "Horris", "Semester" : 5 }
+{ "Name" : "Hritik", "Semester" : 5 }
+
+> db.Student.find({Semester:{$eq:5}}).pretty();
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : "Skating"
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+> db.Student.count();
+4
+> db.Student.find().sort({Name:-1}).pretty();
+{
+	"_id" : 1,
+	"Name" : "John",
+	"USN" : "1B22CS001",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 9.6,
+	"Hobbies" : [
+		"Reading",
+		"Gardening"
+	]
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : "Skating"
+}
+{
+	"_id" : 4,
+	"Name" : "Arthur",
+	"USN" : "1B22CS041",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.6,
+	"Hobbies" : [
+		"Novel Reading"
+	]
+}
+
+(base) bmsce@bmsce-Precision-T1700:~$ mongoexport --host localhost --db mySTUD --collection Student --type=csv --fields="_id,Name,USN,Semester,Dept_name,CGPA,Hobbies" --out /home/bmsce/Desktop/output.csv
+2022-05-06T12:13:37.350+0530	connected to: localhost
+2022-05-06T12:13:37.351+0530	exported 4 records
+(base) bmsce@bmsce-Precision-T1700:~$ mongo
+MongoDB shell version v3.6.8
+connecting to: mongodb://127.0.0.1:27017
+Implicit session: session { "id" : UUID("aabd8226-3ced-43d4-97fb-b0d55827849c") }
+MongoDB server version: 3.6.8
+Server has startup warnings: 
+2022-05-06T11:28:08.073+0530 I STORAGE  [initandlisten] 
+2022-05-06T11:28:08.073+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2022-05-06T11:28:08.073+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2022-05-06T11:28:13.281+0530 I CONTROL  [initandlisten] 
+2022-05-06T11:28:13.281+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2022-05-06T11:28:13.281+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2022-05-06T11:28:13.281+0530 I CONTROL  [initandlisten] 
+> use mySTUD;
+switched to db mySTUD
+> db.Student.update({_id:4},{$set:{Location:”Network”}})
+2022-05-06T12:16:35.289+0530 E QUERY    [thread1] SyntaxError: illegal character @(shell):1:42
+> db.Student.update({_id:4},{$set:{Location:"Network"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty()
+{
+	"_id" : 1,
+	"Name" : "John",
+	"USN" : "1B22CS001",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 9.6,
+	"Hobbies" : [
+		"Reading",
+		"Gardening"
+	]
+}
+{
+	"_id" : 4,
+	"Name" : "Arthur",
+	"USN" : "1B22CS041",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.6,
+	"Hobbies" : [
+		"Novel Reading"
+	],
+	"Location" : "Network"
+}
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : "Skating"
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+> db.Student.find().sort({Name:1}).pretty();
+{
+	"_id" : 4,
+	"Name" : "Arthur",
+	"USN" : "1B22CS041",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.6,
+	"Hobbies" : [
+		"Novel Reading"
+	],
+	"Location" : "Network"
+}
+{
+	"_id" : 3,
+	"Name" : "Horris",
+	"USN" : "1B22EE021",
+	"Semester" : 5,
+	"Dept_name" : "EEE",
+	"CGPA" : 9.3,
+	"Hobbies" : "Skating"
+}
+{
+	"_id" : 7,
+	"Name" : "Hritik",
+	"USN" : "1B22CS014",
+	"Semester" : 5,
+	"Dept_name" : "CSE",
+	"CGPA" : 8.7,
+	"Hobbies" : [
+		"Reading"
+	]
+}
+{
+	"_id" : 1,
+	"Name" : "John",
+	"USN" : "1B22CS001",
+	"Semester" : 6,
+	"Dept_name" : "CSE",
+	"CGPA" : 9.6,
+	"Hobbies" : [
+		"Reading",
+		"Gardening"
+	]
+}
