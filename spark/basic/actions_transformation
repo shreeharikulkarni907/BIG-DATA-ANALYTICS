@@ -1,0 +1,360 @@
+bmsce@bmsce-OptiPlex-3060:~$ spark-shell
+22/06/28 09:35:41 WARN Utils: Your hostname, bmsce-OptiPlex-3060 resolves to a loopback address: 127.0.1.1; using 10.124.7.99 instead (on interface enp1s0)
+22/06/28 09:35:41 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+22/06/28 09:35:41 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+Spark context Web UI available at http://10.124.7.99:4040
+Spark context available as 'sc' (master = local[*], app id = local-1656389146702).
+Spark session available as 'spark'.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 2.4.8
+      /_/
+         
+Using Scala version 2.11.12 (OpenJDK 64-Bit Server VM, Java 1.8.0_312)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> val data=sc.textFile("sparkdata.txt")
+data: org.apache.spark.rdd.RDD[String] = sparkdata.txt MapPartitionsRDD[1] at textFile at <console>:24
+
+scala> data.collect;  
+res0: Array[String] = Array(Scala combines object-oriented and functional programming in one concise, high-level language. Scala's static types help avoid bugs in complex applications, and its JVM and JavaScript runtimes let you build high-performance systems with easy access to huge ecosystems of libraries.)
+
+scala> val splitdata = data.flatMap(line => line.split(" "));  
+splitdata: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[2] at flatMap at <console>:25
+
+scala> splitdata.collect;  
+res1: Array[String] = Array(Scala, combines, object-oriented, and, functional, programming, in, one, concise,, high-level, language., Scala's, static, types, help, avoid, bugs, in, complex, applications,, and, its, JVM, and, JavaScript, runtimes, let, you, build, high-performance, systems, with, easy, access, to, huge, ecosystems, of, libraries.)
+
+scala> val mapdata = splitdata.map(word => (word,1));  
+mapdata: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[3] at map at <console>:25
+
+scala> mapdata.collect;  
+res2: Array[(String, Int)] = Array((Scala,1), (combines,1), (object-oriented,1), (and,1), (functional,1), (programming,1), (in,1), (one,1), (concise,,1), (high-level,1), (language.,1), (Scala's,1), (static,1), (types,1), (help,1), (avoid,1), (bugs,1), (in,1), (complex,1), (applications,,1), (and,1), (its,1), (JVM,1), (and,1), (JavaScript,1), (runtimes,1), (let,1), (you,1), (build,1), (high-performance,1), (systems,1), (with,1), (easy,1), (access,1), (to,1), (huge,1), (ecosystems,1), (of,1), (libraries.,1))
+
+scala> val reducedata = mapdata.reduceByKey(_+_);  
+reducedata: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[4] at reduceByKey at <console>:25
+
+scala> reducedata.collect;
+res3: Array[(String, Int)] = Array((concise,,1), (its,1), (combines,1), (object-oriented,1), (build,1), (one,1), (with,1), (Scala's,1), (complex,1), (static,1), (access,1), (easy,1), (Scala,1), (systems,1), (language.,1), (runtimes,1), (applications,,1), (you,1), (avoid,1), (types,1), (JavaScript,1), (let,1), (high-level,1), (bugs,1), (help,1), (high-performance,1), (to,1), (huge,1), (in,2), (of,1), (programming,1), (and,3), (functional,1), (libraries.,1), (ecosystems,1), (JVM,1))
+
+scala> clear
+<console>:24: error: not found: value clear
+       clear
+       ^
+
+scala> val mountEverest = sc.textFile("mteverest.txt")
+mountEverest: org.apache.spark.rdd.RDD[String] = mteverest.txt MapPartitionsRDD[6] at textFile at <console>:24
+
+scala>  val words = mountEverest.map(x => x.split(" "))
+words: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[7] at map at <console>:25
+
+scala> words.collect()
+res5: Array[Array[String]] = Array(Array(Where, is, Mount, Everest?), Array(Mount, Everest, (Nepali:, Sagarmatha, सगरमाथा;, Tibetan:, Chomolungma, ཇོ་མོ་གླང་མ;, Chinese, Zhumulangma, 珠穆朗玛), is, Earth's, highest, mountain, above, sea, level,, located, in, the, Mahalangur, Himal, sub-range, of, the, Himalayas., The, international, border, between, Nepal, (Province, No., 1), and, China, (Tibet, Autonomous, Region), runs, across, its, summit, point., -, Reference, Wikipedia))
+
+scala>  mountEverest.map(x => x.split(" ").length).collect()
+res6: Array[Int] = Array(4, 48)
+
+scala> mountEverest.map(x => x.split(" ").size).collect()
+res7: Array[Int] = Array(4, 48)
+
+scala> mountEverest.map(x => x.length).collect()
+res8: Array[Int] = Array(24, 351)
+
+scala> mountEverest.map(x => x.toUpperCase()).collect()
+res9: Array[String] = Array("WHERE IS MOUNT EVEREST? ", MOUNT EVEREST (NEPALI: SAGARMATHA सगरमाथा; TIBETAN: CHOMOLUNGMA ཇོ་མོ་གླང་མ; CHINESE ZHUMULANGMA 珠穆朗玛) IS EARTH'S HIGHEST MOUNTAIN ABOVE SEA LEVEL, LOCATED IN THE MAHALANGUR HIMAL SUB-RANGE OF THE HIMALAYAS. THE INTERNATIONAL BORDER BETWEEN NEPAL (PROVINCE NO. 1) AND CHINA (TIBET AUTONOMOUS REGION) RUNS ACROSS ITS SUMMIT POINT. - REFERENCE WIKIPEDIA)
+
+scala> mountEverest.map(x=>x.toLowerCase()).collect()
+res10: Array[String] = Array("where is mount everest? ", mount everest (nepali: sagarmatha सगरमाथा; tibetan: chomolungma ཇོ་མོ་གླང་མ; chinese zhumulangma 珠穆朗玛) is earth's highest mountain above sea level, located in the mahalangur himal sub-range of the himalayas. the international border between nepal (province no. 1) and china (tibet autonomous region) runs across its summit point. - reference wikipedia)
+
+scala> clear
+<console>:24: error: not found: value clear
+       clear
+       ^
+
+scala> val rdd = sc.parallelize(Seq("Where is Mount Everest","Himalayas India"))
+rdd: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[13] at parallelize at <console>:24
+
+scala> rdd.collect
+res12: Array[String] = Array(Where is Mount Everest, Himalayas India)
+
+scala>  rdd.map(x => x.split(" ")).collect
+res13: Array[Array[String]] = Array(Array(Where, is, Mount, Everest), Array(Himalayas, India))
+
+scala> rdd.flatMap(x => x.split(" ")).collect
+res14: Array[String] = Array(Where, is, Mount, Everest, Himalayas, India)
+
+scala> rdd.map(x => x.split(" ")).count()
+res15: Long = 2
+
+scala>  rdd.flatMap(x => x.split(" ")).count()
+res16: Long = 6
+
+scala> mountEverest.flatMap(x=>x.split(" ")).map(x=>(x, x.length)).collect
+res17: Array[(String, Int)] = Array((Where,5), (is,2), (Mount,5), (Everest?,8), (Mount,5), (Everest,7), ((Nepali:,8), (Sagarmatha,10), (सगरमाथा;,8), (Tibetan:,8), (Chomolungma,11), (ཇོ་མོ་གླང་མ;,12), (Chinese,7), (Zhumulangma,11), (珠穆朗玛),5), (is,2), (Earth's,7), (highest,7), (mountain,8), (above,5), (sea,3), (level,,6), (located,7), (in,2), (the,3), (Mahalangur,10), (Himal,5), (sub-range,9), (of,2), (the,3), (Himalayas.,10), (The,3), (international,13), (border,6), (between,7), (Nepal,5), ((Province,9), (No.,3), (1),2), (and,3), (China,5), ((Tibet,6), (Autonomous,10), (Region),7), (runs,4), (across,6), (its,3), (summit,6), (point.,6), (-,1), (Reference,9), (Wikipedia,9))
+
+scala> rdd.collect
+res18: Array[String] = Array(Where is Mount Everest, Himalayas India)
+
+scala> rdd.filter(x=>x.contains("Himalayas")).collect
+res19: Array[String] = Array(Himalayas India)
+
+scala> rdd.filter(x=>x.contains("himalayas")).collect
+res20: Array[String] = Array()
+
+scala> rdd.filter(x=>x.toLowerCase.contains("himalayas")).collect
+res21: Array[String] = Array(Himalayas India)
+
+scala>  sc.parallelize(1 to 15).filter(x=>(x%2==0)).collect
+res22: Array[Int] = Array(2, 4, 6, 8, 10, 12, 14)
+
+scala> sc.parallelize(1 to 15).filter(_%5==0).collect
+res23: Array[Int] = Array(5, 10, 15)
+
+scala> sc.parallelize(1 to 9, 3).map(x=>(x, "Hello")).collect
+res24: Array[(Int, String)] = Array((1,Hello), (2,Hello), (3,Hello), (4,Hello), (5,Hello), (6,Hello), (7,Hello), (8,Hello), (9,Hello))
+
+scala> sc.parallelize(1 to 9, 3).partitions.size
+res25: Int = 3
+
+scala> sc.parallelize(1 to 9, 3).mapPartitions(x=>(Array("Hello").iterator)).collect
+res26: Array[String] = Array(Hello, Hello, Hello)
+
+scala>  sc.parallelize(1 to 9, 3).mapPartitions(x=>(List(x.next).iterator)).collect
+res27: Array[Int] = Array(1, 4, 7)
+
+scala> sc.parallelize(1 to 9, 3).mapPartitions(x=>(List(x.next,x.next, "|").iterator)).collect
+res28: Array[Any] = Array(1, 2, |, 4, 5, |, 7, 8, |)
+
+scala> sc.parallelize(1 to 9, 3).mapPartitions(x=>(List(x.next, x.hasNext).iterator)).collect
+res29: Array[AnyVal] = Array(1, true, 4, true, 7, true)
+
+scala> sc.parallelize(1 to 9, 3).mapPartitions(x=>(List(x.next, x.next, x.next, x.hasNext).iterator)).collect
+res30: Array[AnyVal] = Array(1, 2, 3, false, 4, 5, 6, false, 7, 8, 9, false)
+
+scala>  sc.parallelize(1 to 9, 3).mapPartitions(x=>(List(x.next, x.next, x.next, x.next,x.hasNext).iterator)).collect
+22/06/28 10:15:59 ERROR Executor: Exception in task 0.0 in stage 29.0 (TID 174)
+java.util.NoSuchElementException: next on empty iterator
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+	at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+	at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.run(Task.scala:123)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+22/06/28 10:15:59 ERROR Executor: Exception in task 1.0 in stage 29.0 (TID 175)
+java.util.NoSuchElementException: next on empty iterator
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+	at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+	at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.run(Task.scala:123)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+22/06/28 10:15:59 ERROR Executor: Exception in task 2.0 in stage 29.0 (TID 176)
+java.util.NoSuchElementException: next on empty iterator
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+	at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+	at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.run(Task.scala:123)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+22/06/28 10:15:59 WARN TaskSetManager: Lost task 2.0 in stage 29.0 (TID 176, localhost, executor driver): java.util.NoSuchElementException: next on empty iterator
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+	at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+	at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at $line52.$read$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$iw$$anonfun$1.apply(<console>:25)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.run(Task.scala:123)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+22/06/28 10:15:59 ERROR TaskSetManager: Task 2 in stage 29.0 failed 1 times; aborting job
+org.apache.spark.SparkException: Job aborted due to stage failure: Task 2 in stage 29.0 failed 1 times, most recent failure: Lost task 2.0 in stage 29.0 (TID 176, localhost, executor driver): java.util.NoSuchElementException: next on empty iterator
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+	at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+	at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+	at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+	at $anonfun$1.apply(<console>:25)
+	at $anonfun$1.apply(<console>:25)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.run(Task.scala:123)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+Driver stacktrace:
+  at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1925)
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1913)
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1912)
+  at scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)
+  at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:48)
+  at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1912)
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:948)
+  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:948)
+  at scala.Option.foreach(Option.scala:257)
+  at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:948)
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:2146)
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2095)
+  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2084)
+  at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
+  at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:759)
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2067)
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2088)
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2107)
+  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2132)
+  at org.apache.spark.rdd.RDD$$anonfun$collect$1.apply(RDD.scala:990)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:385)
+  at org.apache.spark.rdd.RDD.collect(RDD.scala:989)
+  ... 49 elided
+Caused by: java.util.NoSuchElementException: next on empty iterator
+  at scala.collection.Iterator$$anon$2.next(Iterator.scala:39)
+  at scala.collection.Iterator$$anon$2.next(Iterator.scala:37)
+  at scala.collection.IndexedSeqLike$Elements.next(IndexedSeqLike.scala:63)
+  at org.apache.spark.InterruptibleIterator.next(InterruptibleIterator.scala:40)
+  at $anonfun$1.apply(<console>:25)
+  at $anonfun$1.apply(<console>:25)
+  at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+  at org.apache.spark.rdd.RDD$$anonfun$mapPartitions$1$$anonfun$apply$23.apply(RDD.scala:823)
+  at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+  at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:346)
+  at org.apache.spark.rdd.RDD.iterator(RDD.scala:310)
+  at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+  at org.apache.spark.scheduler.Task.run(Task.scala:123)
+  at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:411)
+  at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
+  at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:417)
+  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+  at java.lang.Thread.run(Thread.java:748)
+
+scala> clear
+<console>:24: error: not found: value clear
+       clear
+       ^
+
+scala> val rdd1 = sc.parallelize(List("apple","orange","grapes","mango","orange"))
+rdd1: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[42] at parallelize at <console>:24
+
+scala> val rdd2 = sc.parallelize(List("red","green","yellow"))
+rdd2: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[43] at parallelize at <console>:24
+
+scala> rdd1.union(rdd2).collect
+res33: Array[String] = Array(apple, orange, grapes, mango, orange, red, green, yellow)
+
+scala> rdd2.union(rdd1).collect
+res34: Array[String] = Array(red, green, yellow, apple, orange, grapes, mango, orange)
+
+scala> val rdd1 = sc.parallelize(-5 to 5)
+rdd1: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[46] at parallelize at <console>:24
+
+scala>  val rdd2 = sc.parallelize(1 to 10)
+rdd2: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[47] at parallelize at <console>:24
+
+scala> rdd1.intersection(rdd2).collect
+res35: Array[Int] = Array(1, 2, 3, 4, 5)
+
+scala> clear
+<console>:24: error: not found: value clear
+       clear
+       ^
+
+scala> val rdd = sc.parallelize(1 to 15).collect
+rdd: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+
+scala> val rdd = sc.parallelize(1 to 15).reduce(_ + _)
+rdd: Int = 120
+
+scala> val rdd = sc.parallelize(Array("Hello", "Dataneb", "Spark")).reduce(_ + _)
+rdd: String = HelloDatanebSpark
+
+scala> val rdd = sc.parallelize(Array("Hello", "Dataneb", "Spark")).map(x =>(x, x.length)).flatMap(l=> List(l._2)).collect
+rdd: Array[Int] = Array(5, 7, 5)
+
+scala> rdd.reduce(_ + _)
+res37: Int = 17
+
+scala> rdd.reduce((x, y)=>x+y)
+res38: Int = 17
+
+scala> clear
+<console>:24: error: not found: value clear
+       clear
+       ^
+
+scala> sc.parallelize(1 to 20, 4).collect
+res40: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+
+scala> sc.parallelize(1 to 20, 4).count
+res41: Long = 20
+
+scala> sc.parallelize(1 to 20, 4).first
+res42: Int = 1
+
+scala> sc.parallelize(1 to 20, 4).take(5)
+res43: Array[Int] = Array(1, 2, 3, 4, 5)
+
+scala> 
